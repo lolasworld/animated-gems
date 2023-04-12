@@ -1,0 +1,188 @@
+HTML
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="app.css" />
+    <title>Document</title>
+</head>
+<body>
+        <div id="app">
+        <h1>To do list</h1>
+        <ul>
+        </ul>
+        <input type="text" placeholder="New task">
+        <button class='btn_add'>Add</button>
+        <p>Insert a new task</p>
+        </div>
+        <script src="app.js"></script>
+
+</body>
+</html>
+
+
+
+
+CSS
+
+
+
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Montserrat&family=Nosifer&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: #f5f5f5;
+  font-family: Times, "Times New Roman";
+}
+#app {
+  width: 50%;
+  min-width: 400px;
+}
+h1 {
+  font-family: Times, "Times New Roman";
+  text-align: center;
+  margin-bottom: 50px;
+  font-size: 45px;
+  color: #335c62;
+  font-weight: 700;
+}
+p {
+  font-family: Times, "Times New Roman";
+  text-align: center;
+  margin-top: 30px;
+  font-size: 30px;
+  color: #5c5c5c;
+  font-weight: 300;
+}
+ul {
+  font-family: Times, "Times New Roman";
+  font-size: 20px;
+  font-weight: 400;
+  font-style: italic;
+  margin: 50px;
+}
+ul li {
+  margin-bottom: 10px;
+  color: #5c5c5c;
+}
+ul li a {
+  margin-left: 15px;
+  color: white;
+  cursor: pointer;
+  border: 1px solid #7cbe7b;
+  border-radius: 5px;
+  padding: 0 15px 2px 15px;
+  background-color: #7cbe7b;
+}
+ul li a:hover {
+  opacity: 0.8;
+}
+input,
+button {
+  font: 400 20px "Lato", sans-serif;
+}
+input {
+  width: 60%;
+  height: 40px;
+  color: #5c5c5c;
+  border: 1px solid #dcdce6;
+  border-radius: 8px;
+  padding: 0 24px;
+  margin-right: 10px;
+}
+.btn_add {
+  width: 30%;
+  height: 40px;
+  border: 1px solid #dcdce6;
+  border-radius: 8px;
+  background-color: #59a2ad;
+  color: #fff;
+  cursor: pointer;
+}
+.btn_add:hover {
+  opacity: 0.9;
+}
+
+
+JavaScript
+
+
+let listElement = document.querySelector("#app ul");
+let inputElement = document.querySelector("#app input");
+let buttonElement = document.querySelector("#app button");
+
+let todos = JSON.parse(localStorage.getItem("list_todos")) || [];
+
+function renderTodos() {
+  listElement.innerHTML = "";
+
+  for (todo of todos) {
+    let todoElement = document.createElement("li");
+    let todoText = document.createTextNode(todo);
+
+    let linkElement = document.createElement("a");
+
+    linkElement.setAttribute("href", "#");
+
+    let pos = todos.indexOf(todo);
+    linkElement.setAttribute("onclick", "deleteTodo(" + pos + ")");
+
+    let linkText = document.createTextNode("done");
+
+    linkElement.appendChild(linkText);
+
+    todoElement.appendChild(todoText);
+    todoElement.appendChild(linkElement);
+    listElement.appendChild(todoElement);
+  }
+}
+
+renderTodos();
+
+function addTodo() {
+  let todoText = inputElement.value;
+
+  todos.push(todoText);
+  inputElement.value = "";
+  renderTodos();
+  saveToStorage();
+}
+
+buttonElement.onclick = addTodo;
+
+function deleteTodo(pos) {
+  todos.splice(pos, 1);
+  renderTodos();
+  saveToStorage();
+}
+
+function saveToStorage() {
+  localStorage.setItem("list_todos", JSON.stringify(todos));
+}
+
+
+
+
+
