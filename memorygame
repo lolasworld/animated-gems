@@ -1,0 +1,227 @@
+HTML
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Memory Game!</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+      <h1> Lola's Memory Game Challenge </h1>
+<div class="container">
+    <div class="data">
+    <div class="score">Score : <span class="scoreBoard">0</span></div>
+    <div class="click">Click : <span class="clickBoard">0</span></div>
+    </div>
+    <div class="grid">
+    <div class="popup">
+    <button class="playAgain">play Again</button>
+    </div>
+    </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+
+
+CSS:
+
+
+
+
+
+h1 {
+  color: beige;
+  align-items: center;
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+body {
+  background: rgb(2, 0, 36);
+  background: linear-gradient(
+    90deg,
+    rgba(2, 0, 36, 1) 0%,
+    rgba(6, 75, 30, 1) 62%,
+    rgba(9, 121, 27, 1) 100%,
+    rgba(0, 212, 255, 1) 100%
+  );
+}
+
+.score {
+  color: beige;
+}
+
+.click {
+  color: beige;
+}
+.grid {
+  width: 90%;
+  height: 300px;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 60px auto;
+}
+
+.grid img {
+  margin: 20px;
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+  height: 10em;
+  width: 10em;
+  align-items: center;
+}
+
+.grid img.flip {
+  transform: rotateY(180deg);
+}
+
+.data {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 30px;
+  font-size: 23px;
+}
+
+.data span {
+  color: rgb(206, 121, 11);
+  font-size: 30px;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+
+
+JavaScript:
+
+
+
+
+
+
+
+
+let cardArray = [
+  { name: "pineapple", img: "imgs/pineapple.png" },
+  { name: "pineapple", img: "imgs/pineapple.png" },
+  { name: "tiger", img: "imgs/tiger.png" },
+  { name: "tiger", img: "imgs/tiger.png" },
+  { name: "car", img: "imgs/car.png" },
+  { name: "car", img: "imgs/car.png" },
+  { name: "cherry-blossom", img: "imgs/cherry-blossom.png" },
+  { name: "cherry-blossom", img: "imgs/cherry-blossom.png" },
+  //   { name: "glasses-emoji", img: "imgs/glasses-emoji.png" },
+  //   { name: "glasses-emoji", img: "imgs/glasses-emoji.png" },
+  //   { name: "basketball", img: "imgs/basketball.png" },
+  //   { name: "basketball", img: "imgs/basketball.png" },
+];
+
+//define variables and get DOM element
+
+let grid = document.querySelector(".grid");
+let scoreBoard = document.querySelector(".scoreBoard");
+let popup = document.querySelector(".popup");
+let playAgain = document.querySelector(".playAgain");
+let clickBoard = document.querySelector(".clickBoard");
+let imgs;
+let cardsId = [];
+let cardsSelected = [];
+let cardsWon = 0;
+let clicks = 0;
+
+document.addEventListener("DOMContentLoaded", function () {
+  //define functions
+
+  createBoard(grid, cardArray);
+  arrangeCard();
+  playAgain.addEventListener("click", replay);
+
+  //add a click function for images
+
+  imgs = document.querySelectorAll("img");
+  Array.from(imgs).forEach((img) => img.addEventListener("click", flipCard));
+});
+
+//createBoard function
+
+function createBoard(grid, array) {
+  popup.style.display = "none";
+  array.forEach((arr, index) => {
+    let img = document.createElement("img");
+    img.setAttribute("src", "imgs/cards.png");
+    img.setAttribute("data-id", index);
+    grid.appendChild(img);
+  });
+}
+
+// arrangeCard function
+
+function arrangeCard() {
+  cardArray.sort(() => 0.5 - Math.random());
+}
+
+// flip Card function
+
+function flipCard() {
+  let selected = this.dataset.id;
+  cardsSelected.push(cardArray[selected].name);
+  cardsId.push(selected);
+  this.classList.add("flip");
+  this.setAttribute("src", cardArray[selected].img);
+  if (cardsId.length === 2) {
+    setTimeout(checkForMatch, 500);
+  }
+}
+
+// checkForMatch function
+
+function checkForMatch() {
+  let imgs = document.querySelectorAll("img");
+  let firstCard = cardsId[0];
+  let secondCard = cardsId[1];
+  if (cardsSelected[0] === cardsSelected[1] && firstCard !== secondCard) {
+    alert("You have found a match");
+    cardsWon += 1;
+    scoreBoard.innerHTML = cardsWon;
+    setTimeout(checkWon, 500);
+  } else {
+    imgs[firstCard].setAttribute("src", "imgs/background.png");
+    imgs[secondCard].setAttribute("src", "imgs/background.png");
+    alert("Please try again");
+    imgs[firstCard].classList.remove("flip");
+    imgs[secondCard].classList.remove("flip");
+  }
+  cardsSelected = [];
+  cardsId = [];
+  clicks += 1;
+  clickBoard.innerHTML = clicks;
+}
+
+function checkWon() {
+  if (cardsWon == cardArray.length / 2) {
+    alert("You won!!!");
+    setTimeout(() => (popup.style.display = "flex"), 300);
+  }
+}
+// The replay function
+
+function replay() {
+  arrangeCard();
+  grid.innerHTML = "";
+  createBoard(grid, cardArray);
+  cardsWon = 0;
+  clicks = 0;
+  clickBoard.innerHTML = 0;
+  scoreBoard.innerHTML = 0;
+  popup.style.display = "none";
+}
